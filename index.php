@@ -1,5 +1,5 @@
 <?php
-include_once 'db.php';
+include_once 'secrets.php';
 $hourString = date("G", time());
 $todayString = $hourString >= 20 ? date("Y-m-d", (time() + 86400)) : date("Y-m-d", time());
 $yesterdayString = $hourString >= 20 ? date("Y-m-d", time()) : date("Y-m-d", (time() - 86400));
