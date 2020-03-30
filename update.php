@@ -20,8 +20,10 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
     if (is_numeric($json_amount)) {
       $newAmount =  $json_amount;
     } else {
-      $jsonError = true;
+      $jsonError = "Not numeric";
     }
+  } else {
+    $jsonError = "No JSON found";
   }
 
   if ($newAmount > 0) {
