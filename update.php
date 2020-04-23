@@ -16,11 +16,42 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
 
   if(!empty($json)){
     $json_object = json_decode($json);
-    $json_amount = $json_object->{"dailySaltUsed"};
-    if (is_numeric($json_amount)) {
-      $newAmount =  $json_amount;
+    if (json_last_error() == JSON_ERROR_NONE) {
+      $json_dDist = $json_object->{"dailyDistance"};
+      $json_dUsed = $json_object->{"dailySaltUsed"};
+      $json_sDist = $json_object->{"seasonalDistance"};
+      $json_sUsed = $json_object->{"seasonalSaltUsed"};
+      if (is_numeric($json_dDist) && is_numeric($json_dUsed) && is_numeric($json_sDist) && is_numeric($json_dUsed)) {
+        if ($json_sDist > $json_dDist && $json_sUsed > $json_dUsed) {
+          $newAmount =  $json_dDist > 10 && $json_dUsed > 25 ? $json_dUsed : 0;
+          echo $newAmount;
+        } else {
+          $jsonError = "Value error";
+        }
+      } else {
+        $jsonError = "Not numeric";
+      }
     } else {
-      $jsonError = "Not numeric";
+      switch (json_last_error()) {
+        case JSON_ERROR_DEPTH:
+            $jsonError = "Maximum stack depth exceeded";
+            break;
+        case JSON_ERROR_STATE_MISMATCH:
+            $jsonError = "Underflow or the modes mismatch";
+            break;
+        case JSON_ERROR_CTRL_CHAR:
+            $jsonError = "Unexpected control character found";
+            break;
+        case JSON_ERROR_SYNTAX:
+            $jsonError = "Syntax error, malformed JSON";
+            break;
+        case JSON_ERROR_UTF8:
+            $jsonError = "Malformed UTF-8 characters, possibly incorrectly encoded";
+            break;
+        default:
+            $jsonError = "Unknown error";
+            break;
+      }
     }
   } else {
     $jsonError = "No JSON found";
@@ -61,6 +92,8 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
   }
 
   if ($sqlError || $jsonError) {
+    echo $sqlError;
+    echo $jsonError;
     $recipient = $myName . " <" . $myMail . ">";
     $headers = "From: " . $myName . " <" . $myMail . ">\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1\r\n";
     mail($recipient, "Salty error", "SQL: " . $sqlError . "Json: " . $jsonError, $headers);
