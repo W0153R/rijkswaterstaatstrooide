@@ -24,7 +24,6 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
       if (is_numeric($json_dDist) && is_numeric($json_dUsed) && is_numeric($json_sDist) && is_numeric($json_dUsed)) {
         if ($json_sDist > $json_dDist && $json_sUsed > $json_dUsed) {
           $newAmount =  $json_dDist > 10 && $json_dUsed > 25 ? $json_dUsed : 0;
-          echo $newAmount;
         } else {
           $jsonError = "Value error";
         }
@@ -92,8 +91,6 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
   }
 
   if ($sqlError || $jsonError) {
-    echo $sqlError;
-    echo $jsonError;
     $recipient = $myName . " <" . $myMail . ">";
     $headers = "From: " . $myName . " <" . $myMail . ">\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=ISO-8859-1\r\n";
     mail($recipient, "Salty error", "SQL: " . $sqlError . "Json: " . $jsonError, $headers);
