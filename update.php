@@ -23,7 +23,7 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
       $json_sUsed = $json_object->{"seasonalSaltUsed"};
       if (is_numeric($json_dDist) && is_numeric($json_dUsed) && is_numeric($json_sDist) && is_numeric($json_dUsed)) {
         if ($json_sDist > $json_dDist && $json_sUsed > $json_dUsed) {
-          $newAmount =  $json_dDist > 10 && $json_dUsed > 25 ? $json_dUsed : 0;
+          $newAmount =  $json_dDist > 100 && $json_dUsed > 2500 ? $json_dUsed : 0;
         } else {
           $jsonError = "Value error";
         }
