@@ -10,7 +10,7 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
   $oldAmount = 0;
   $updateAmount = false;
 
-  $json = file_get_contents('https://rijkswaterstaatstrooit.nl/api/statistics/trucks');
+  $json = file_get_contents('https://rijkswaterstaatstrooit.nl/api/statistics');
   $jsonError = false;
   $sqlError = false;
 
@@ -24,7 +24,7 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
         $json_sUsed = $json_object->{"seasonalSaltUsed"};
         if (is_numeric($json_dDist) && is_numeric($json_dUsed) && is_numeric($json_sDist) && is_numeric($json_dUsed)) {
           if ($json_sDist > $json_dDist && $json_sUsed > $json_dUsed) {
-            $newAmount =  $json_dDist > 100 && $json_dUsed > 2500 ? $json_dUsed : 0;
+            $newAmount =  $json_dUsed;
           } else {
             $jsonError = "Value error";
           }
