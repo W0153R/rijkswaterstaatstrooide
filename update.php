@@ -10,11 +10,24 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
   $oldAmount = 0;
   $updateAmount = false;
 
-  $json = file_get_contents('https://rijkswaterstaatstrooit.nl/api/statistics');
+  $curlInstance = curl_init();
+
+  curl_setopt($curlInstance, CURLOPT_AUTOREFERER, false);
+  curl_setopt($curlInstance, CURLOPT_DNS_SHUFFLE_ADDRESSES, true);
+  curl_setopt($curlInstance, CURLOPT_FRESH_CONNECT, true);
+  curl_setopt($curlInstance, CURLOPT_SSL_VERIFYPEER, false);
+  curl_setopt($curlInstance, CURLOPT_HEADEROPT, CURLHEADER_UNIFIED);
+  curl_setopt($curlInstance, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+  curl_setopt($curlInstance, CURLOPT_HTTPHEADER,  array('Accept: application/json, text/plain, */*'));
+  curl_setopt($curlInstance, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($curlInstance, CURLOPT_URL, 'https://rijkswaterstaatstrooit.nl/api/statistics');
+  curl_setopt($curlInstance, CURLOPT_FOLLOWLOCATION, TRUE);
+
+  $json = curl_exec($curlInstance);
   $jsonError = false;
   $sqlError = false;
 
-  if(!empty($json)){
+  if (!curl_error($curlInstance) && !empty($json)) {
     $json_object = json_decode($json);
     if (json_last_error() == JSON_ERROR_NONE) {
       if (array_key_exists('dailyDistance', $json_object) && array_key_exists('dailySaltUsed', $json_object) && array_key_exists('seasonalDistance', $json_object) && array_key_exists('seasonalSaltUsed', $json_object)) {
@@ -57,6 +70,8 @@ if($_GET["key"] && $_GET["key"] == $secretKey) {
   } else {
     $jsonError = "No JSON found";
   }
+
+  curl_close($curlInstance);
 
   if ($newAmount > 0) {
     $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
